@@ -1,0 +1,77 @@
+package com.juaracoding.FYI_JavaWeb.core;/*
+Created By IntelliJ IDEA 2022.2.3 (Community Edition)
+Build #IU-222.4345.14, built on October 5, 2022
+@Author Moh. Ikhsan a.k.a. Fitriyani
+Java Developer
+Created on 2/27/2023 10:18 PM
+@Last Modified 2/27/2023 10:18 PM
+Version 1.0
+*/
+
+import org.mindrot.jbcrypt.BCrypt;
+
+import java.util.function.Function;
+
+public class BcryptCustom {
+    private final int logRounds;
+
+    public BcryptCustom(int logRounds) {
+        this.logRounds = logRounds;
+    }
+
+    public String hash(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt(logRounds));
+    }
+
+    public boolean verifyHash(String password, String hash) {
+        return BCrypt.checkpw(password, hash);
+    }
+
+    public boolean verifyAndUpdateHash(String password, String hash, Function<String, Boolean> updateFunc) {
+        if (BCrypt.checkpw(password, hash)) {
+            int intRounds = getRounds(hash);
+            System.out.println("ROUNDS VALUE -> "+intRounds);
+            if(intRounds ==0)
+            {
+                return false;
+            }
+            if (intRounds != logRounds) {
+                String newHash = hash(password);
+                return updateFunc.apply(newHash);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private int getRounds(String salt) {
+        char minor = (char)0;
+        int off = 0;
+
+        if (salt.charAt(0) != '$' || salt.charAt(1) != '2')
+        {
+            System.out.println("Salt Version not valid");
+            return 0;
+        }
+        if (salt.charAt(2) == '$')
+        {
+            off = 3;
+        }
+        else
+        {
+            minor = salt.charAt(2);
+            if (minor != 'a' || salt.charAt(3) != '$')
+            {
+                System.out.println("Salt Version not valid");
+                return 0;
+            }
+            off = 4;
+        }
+        if (salt.charAt(off + 2) > '$')
+        {
+            System.out.println("Salt rounds are  Missing");
+            return 0;
+        }
+        return Integer.parseInt(salt.substring(off, off + 2));
+    }
+}

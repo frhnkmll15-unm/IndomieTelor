@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link th:href="@{/styles/style.css}" rel="stylesheet" />
+  <link th:href="@{/styles/login.css}" rel="stylesheet" />
+  <title>Document</title>
+</head>
+<body>
+<div class="container">
+  <div class="wrapper">
+    <form th:action="@{/api/authz/v1/register/}" th:object = "${users}" method="POST">
+      <h1>Register</h1>
+      <div>
+        <label for="namaLengkap">Nama Lengkap:</label>
+        <input type="text" th:field = "*{namaLengkap}" name="namaLengkap" />
+      </div>
+      <div>
+        <label for="username">Username:</label>
+        <input type="text" th:field = "*{username}" name="username" />
+      </div>
+      <div>
+        <label for="email">Email:</label>
+        <input type="text" th:field = "*{email}" name="email" />
+      </div>
+      <div>
+        <label for="password">Password:</label>
+        <input type="password" th:field = "*{password}" name="password" />
+      </div>
+      <div>
+        <button type="submit">Register</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>
